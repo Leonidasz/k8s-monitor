@@ -27,17 +27,20 @@ spec:
         command:
         - "/bin/prometheus"
         args:
-        - "--config.file=/etc/prometheus/prometheus.yml"
+        - "--config.file=/etc/prometheus/config/prometheus.yml"
         - "--storage.tsdb.path=/prom-data"
         - "--storage.tsdb.retention=24h"
+        - "--web.enable-lifecycle"
         ports:
         - containerPort: 9090
           protocol: TCP
         volumeMounts:
         - mountPath: "/prom-data"
           name: prom-storage         
-        - mountPath: "/etc/prometheus"
+        - mountPath: "/etc/prometheus/config"
           name: config-volume
+        - mountPath: "/etc/prometheus/rule"
+          name: rule-volume  
           
         resources:
           requests:
@@ -50,7 +53,10 @@ spec:
       volumes:
       - name: config-volume
         configMap:
-          name: prometheus-config 
+          name: prometheus-config
+      - name: rule-volume
+        configMap:
+          name: prometheus-rules    
   volumeClaimTemplates:
   - metadata:
       name: prom-storage
