@@ -28,11 +28,31 @@ data:
           summary: "{{$labels.instance}}: High Memory usage detected"
           description: "{{$labels.instance}}: Memory usage is above 80% (current value is: {{ $value }}"
       - alert: NodeCPUUsage
-        expr: (100 - (avg by (instance) (irate(node_cpu{job="kubernetes-node-exporter",mode="idle"}[5m])) * 100)) > 80
+        expr: (100 - (avg by (instance) (irate(node_cpu{kubernetes_name="node-exporter",mode="idle"}[5m])) * 100)) > 80
         for: 2m
         labels:
           team: node
         annotations:
           summary: "{{$labels.instance}}: High CPU usage detected"
           description: "{{$labels.instance}}: CPU usage is above 80% (current value is: {{ $value }}"  
-    
+      - alert: AlertTest
+        expr: (100 - (avg by (instance) (irate(node_cpu{kubernetes_name="node-exporter",mode="idle"}[5m])) * 100)) > 5
+        for: 30s
+        labels:
+          team: node
+          service: k8s
+          severity: warning
+          external_monitor_id: 2000001
+        annotations:
+          summary: "{{$labels.instance}}: Alert Test"
+          description: "{{$labels.instance}}: Alert Test! CPU usage (current value is: {{ $value }}"
+      - alert: AlertTest
+              expr: (100 - (avg by (instance) (irate(node_cpu{kubernetes_name="node-exporter",mode="idle"}[5m])) * 100)) > 5
+              labels:
+                team: node
+                service: k8s
+                severity: warning
+                external_monitor_id: 2000001
+              annotations:
+                summary: "{{$labels.instance}}: Alert Test"
+                description: "{{$labels.instance}}: Alert Test! CPU usage (current value is: {{ $value }}"
